@@ -9,10 +9,8 @@ let styles = [];
 
 fs.access(projectPath, (error) => {
   if (error) {
-    console.log('folder does not exist');
     copyFolder();
   } else {
-    console.log('folder exist');
     removeFolder();
   }
 });
@@ -27,7 +25,6 @@ const copyFolder = () => {
   fs.promises
     .mkdir(projectPath)
     .then(() => {
-      console.log('project-dist folder created');
       fs.readFile(
         path.join(__dirname, 'template.html'),
         'utf-8',
@@ -39,7 +36,6 @@ const copyFolder = () => {
               'utf8',
             )
             .then(() => {
-              console.log('added info to index.html');
               const readStream = fs.createReadStream(
                 path.join(__dirname, 'project-dist', 'index.html'),
                 'utf-8',
@@ -50,7 +46,6 @@ const copyFolder = () => {
 
                 fs.readdir(path.join(__dirname, 'components'), (err, files) => {
                   files.forEach((el) => {
-                    console.log(el.slice(0, el.lastIndexOf('.')));
                     const component = fs.createReadStream(
                       path.join(__dirname, 'components', el),
                       'utf-8',
@@ -101,45 +96,37 @@ const copyFolder = () => {
         });
     })
     .then(() => {
-      fs.promises
-        .mkdir(newAssetsPath)
-        .then(() => {
-          console.log('assets folder created');
-        })
-        .then(() => {
-          fs.promises.readdir(origAssetsPath).then((data) => {
-            data.forEach((folder) => {
-              fs.promises
-                .mkdir(path.join(__dirname, 'project-dist', 'assets', folder))
-                .then(() => {
-                  console.log(folder, 'folder created');
-                })
-                .then(() => {
-                  fs.readdir(
-                    path.join(__dirname, 'assets', folder),
-                    (err, fl) => {
-                      fl.forEach((el) => {
-                        fs.copyFile(
-                          path.join(__dirname, 'assets', folder, el),
-                          path.join(
-                            __dirname,
-                            'project-dist',
-                            'assets',
-                            folder,
-                            el,
-                          ),
-                          (err) => {
-                            if (err) {
-                              throw err;
-                            }
-                          },
-                        );
-                      });
-                    },
-                  );
-                });
-            });
+      fs.promises.mkdir(newAssetsPath).then(() => {
+        fs.promises.readdir(origAssetsPath).then((data) => {
+          data.forEach((folder) => {
+            fs.promises
+              .mkdir(path.join(__dirname, 'project-dist', 'assets', folder))
+              .then(() => {
+                fs.readdir(
+                  path.join(__dirname, 'assets', folder),
+                  (err, fl) => {
+                    fl.forEach((el) => {
+                      fs.copyFile(
+                        path.join(__dirname, 'assets', folder, el),
+                        path.join(
+                          __dirname,
+                          'project-dist',
+                          'assets',
+                          folder,
+                          el,
+                        ),
+                        (err) => {
+                          if (err) {
+                            throw err;
+                          }
+                        },
+                      );
+                    });
+                  },
+                );
+              });
           });
         });
+      });
     });
 };
