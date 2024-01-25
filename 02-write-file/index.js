@@ -8,18 +8,21 @@ const askQuestion = readline.createInterface({
   output: process.stdout,
 });
 
-askQuestion.question('\nWhat is your name?\n', (data) => {
+askQuestion.prompt();
+console.log('What is your name?');
+
+askQuestion.on('line', (data) => {
   if (data === 'exit') {
-    byeFn();
     askQuestion.close();
   } else {
-    createFile.write(data);
-    byeFn();
+    createFile.write(data + '\n');
   }
 });
 
 const byeFn = () => {
   askQuestion.on('close', () => {
-    console.log('Bye-bye! See you later!\n');
+    console.log('Bye-bye! See you later!');
   });
 };
+
+byeFn();
